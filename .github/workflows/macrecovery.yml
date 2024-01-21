@@ -1,0 +1,27 @@
+name: Build MacRecovery
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build macrecovery.exe
+        run: |
+          cmd.exe /c py-to-exe.bat
+
+      - name: Upload macrecovery.exe to releases
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: "macrecovery.exe"
+          token: ${{ secrets.GH_TOKEN }}
+          body: |
+            This build comes from GitHub actions and was generated automatically.
+            The release was pushed by @${{ github.triggering_actor }} from the [latest OpenCore script](https://github.com/acidanthera/OpenCorePkg/tree/master/Utilities/macrecovery).
+          prerelease: false
+          tag_name: macrecovery_commit_${{ github.sha }}
+          name: MacRecovery.exe
